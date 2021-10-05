@@ -101,14 +101,11 @@ io.on("connect", (socket) => {
     
     wordArray = chooseAWord()
     indexes  = getAllIndexes(users, ROOM_ID)
+    console.log(indexes.length)
        
-    random = Math.floor(Math.random() * indexes.length);
-    
-      
-    
-   console.log(wordArray)
+    random = Math.floor(Math.random() * indexes.length-1);
+    console.log(random)
     io.to(users[indexes[random]].clientId).emit('chooseAWord', wordArray)
-
   })
 
   function getAllIndexes(arr, val) {
@@ -130,7 +127,10 @@ io.on("connect", (socket) => {
       io.to(data.ROOM_ID).emit('counter', counter);
       counter--
       if (counter === 0) {
-        io.to(data.ROOM_ID).emit('endCounter', "Congratulations You WON!!");
+        io.to(data.ROOM_ID).emit('endCounter', "Nobody found the word !");
+        
+        firstPlayer = users.findIndex(x => x.clientRoom==data.ROOM_ID)
+        io.to(users[firstPlayer].clientId).emit('nextLevel')
         clearInterval(WinnerCountdown);
       }
     }, 1000);
@@ -152,16 +152,14 @@ io.on("connect", (socket) => {
   // Function to choose 3 random words
   function chooseAWord() {
     var arr = new Array()
-    
-    while (arr.length < 3) {
+        while (arr.length < 3) {
       var r = Math.floor(Math.random() * 1000) + 1;
       wordToFind = nouns[r][1]
       if (arr.indexOf(wordToFind) === -1) arr.push(wordToFind);
     }
+    console.log(arr)
     return arr
   }
-
-
 
   socket.on("down", (data) => {
     socket.to(data.ROOM_ID).emit('ondown', { x: data.x, y: data.y })

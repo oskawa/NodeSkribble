@@ -43,34 +43,31 @@ $("form").submit(function (e) {
 
 socket.on('wordFound', (data) => {
     canDraw = false
-    $('#motFound').css('visibility', 'visible')
-    $("#motFound").append($("<p>").text(`Le mot à trouver était ${data}`))
+    $('#popUp').css('visibility', 'visible')
+    $("#popUp").append($("<p>").text(`Le mot à trouver était ${data}`))
 })
 
+next = '<button id="nextLevel">Next round</button>'
+
 socket.on('nextLevel', () => {
+    $('#popUp').append(next)
     $('button#nextLevel').css('visibility', 'visible')
 })
 
-$('button#nextLevel').on('click', function () {
-    socket.emit('beginParty', ROOM_ID)
-    $('#motFound').css('visibility', 'hidden')
-})
 
-socket.on('counter', function(count){
+
+socket.on('counter', function (count) {
     $('#counter').html(count);
-  });
+});
 
-let created = $('<button id="choosingWord"></button>')
+
 
 socket.on('chooseAWord', function (arr) {
-    $("#popUp").remove("#choosingWord");
-    $("#motFound").css('visibility', 'hidden')
-
+   
     popup.style.visibility = "visible"
     console.log(arr)
     arr.forEach(element => {
-        console.log(element[0])
-        created.attr('id', element)
+       
         $("#listOfWord").append($("<button id='choosingWord' class='" + element + "'></button>").text(element))
     })
 
@@ -100,7 +97,7 @@ socket.on('nname', function (data) {
 socket.on('userDisconected', function (user) {
     console.log(user)
     element = document.getElementById(user)
-    if (element){
+    if (element) {
         element.remove()
     }
 })
@@ -125,7 +122,7 @@ btn.addEventListener('click', function () {
 
 })
 
-$('#popUp').on('click', 'button', function () {
+$('#popUp').on('click', '#choosingWord', function () {
     console.log(this.className)
     socket.emit('wordChoosen', ({ className: this.className, ROOM_ID }))
     $('#popUp').css('visibility', 'hidden')
@@ -141,6 +138,13 @@ beginPartyBtn.addEventListener('click', function () {
     socket.emit('beginParty', ROOM_ID)
 });
 
+$('#popUp').on('click', '#nextLevel', function () {
+    console.log('clickckice')
+    socket.emit('beginParty', ROOM_ID)
+    $('#popUp #nextLevel').remove()
+    $('#popUp').css('visibility', 'hidden')
+    
+})
 
 window.onmouseup = (e) => {
     mouseDown = false
@@ -149,12 +153,14 @@ window.onmouseup = (e) => {
 socket.on("ondraw", ({ x, y }) => {
     ctx.lineTo(x, y)
     ctx.stroke()
-   
+
 })
 
 socket.on("cantDraw", (wordLength) => {
+    $('#popUp').css('visibility', 'visible')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     canDraw = false
+    ctx.beginPath();
 
     for (i = 0; i < wordLength; i++) {
         $('#wordToFindIndice').append('_ ')
@@ -164,28 +170,32 @@ socket.on("cantDraw", (wordLength) => {
 socket.on("canDraw", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     canDraw = true
+    ctx.beginPath();
 })
 
-socket.on("endCounter", ()=>{
+socket.on("endCounter", (msg) => {
     canDraw = false
     $('#popUp').css('visibility', 'visible')
-    $('#popUp').append($('<p>').text(count))
-    
+    // $('#popUp').append($'<h4>').text(msg)
+    $('#popUp #listOfWord button').remove()
+    $('#popUp').append($('<p>').text(msg))
+
+
 })
 
 socket.on('ondown', ({ x, y }) => {
     ctx.moveTo(x, y)
 })
 
-socket.on('ondrawColor', (color)=>{
+socket.on('ondrawColor', (color) => {
     draw_color = color
 })
 
 
-$('.color').on('click', (event)=>{
-    
+$('.color').on('click', (event) => {
+
     draw_color = event.target.id
-    socket.emit('drawColor', { color:event.target.id, ROOM_ID })
+    socket.emit('drawColor', { color: event.target.id, ROOM_ID })
 
 })
 
