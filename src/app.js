@@ -5,6 +5,7 @@ const { v4: uuidV4 } = require('uuid')
 let io = require("socket.io")(httpServer);
 var nouns = require('fun-word-list/lists/nouns');
 console.log(nouns[0][0])
+let PORT = process.env.PORT || 8080;
 
 
 var wordToFind
@@ -195,5 +196,5 @@ io.on("connect", (socket) => {
 
 
 // Lauch the server
-let PORT = process.env.PORT || 8080;
+
 httpServer.listen(PORT, () => console.log(`Server started on port ${PORT}`));
