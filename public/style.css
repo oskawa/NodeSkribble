@@ -110,9 +110,12 @@ button#nextLevel{
     visibility: hidden;
     
     margin: 0 12px;
-    background: #05516085;
+   
     text-align: center;
     width: 40%;
+    border-radius: 20px;
+    background: #ffff63;
+    border:none
     
     
     
@@ -156,6 +159,13 @@ button#nextLevel{
 #wordToFindIndice{
     background: #ffffffbd;
     border-radius: 20px;
+    padding-top: 5rem;
+}
+
+#popUp p{
+    color: white;
+    font-family: 'Gloria Hallelujah', cursive;
+    
 }
 
 
@@ -190,8 +200,12 @@ button#nextLevel{
     margin: 1rem;
 }
 
-
-
+#messages p span{
+    font-weight: lighter;
+}
+#messages p{
+    font-weight: bold;
+}
 section#drawing{
     position: absolute;
     width: 100%;

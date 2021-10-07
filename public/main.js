@@ -43,6 +43,7 @@ $("form").submit(function (e) {
 
 socket.on('wordFound', (data) => {
     canDraw = false
+    $('#popUp button').remove()
     $('#popUp').css('visibility', 'visible')
     $("#popUp").append($("<p>").text(`Le mot à trouver était ${data}`))
 })
@@ -63,7 +64,7 @@ socket.on('counter', function (count) {
 
 
 socket.on('chooseAWord', function (arr) {
-   
+    $('#popUp p').remove()   
     popup.style.visibility = "visible"
     console.log(arr)
     arr.forEach(element => {
@@ -76,7 +77,7 @@ socket.on('chooseAWord', function (arr) {
 
 
 socket.on('chat_message', function (username, msg) {
-    $("#messages").append($("<p>").text(`${username} : ${msg}`))
+    $("#messages").append($("<p>").text(`${username} :`).append($("<span>").text(` ${msg}`)))
 })
 
 socket.on('displayName', function (data) {
@@ -157,7 +158,8 @@ socket.on("ondraw", ({ x, y }) => {
 })
 
 socket.on("cantDraw", (wordLength) => {
-    $('#popUp').css('visibility', 'visible')
+    $('#popUp').css('visibility', 'hidden')
+    $('#wordToFindIndice').empty()
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     canDraw = false
     ctx.beginPath();
@@ -174,6 +176,7 @@ socket.on("canDraw", () => {
 })
 
 socket.on("endCounter", (msg) => {
+    $('#popUp p').remove()
     canDraw = false
     $('#popUp').css('visibility', 'visible')
     // $('#popUp').append($'<h4>').text(msg)
